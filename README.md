@@ -11,7 +11,7 @@ This project includes:
 - **`data_processor.py`**: Cleans, tokenizes, and prepares embeddings from the text.
 - **`next-word-predictor.py`**: Trains a model and generates next-word predictions.
 - **`demo.ipynb`**: Demo notebook with model trained outputs, implementing interactable version of next-word-predictor.py
----
+
 
 ## Architecture
 The model consists of:
@@ -40,23 +40,27 @@ poetry install
 poetry run python next-word-predictor.py
 ```
 
-What it does:
+#### What it does:
 
-Downloads the text file (if not already available)
-Processes the text into training data
-Trains a prediction model
-Outputs training loss update and next-word predictions for 5 different seed texts along with top 5 word predictions at each stage for the last seed text.
+1. Downloads the text file (if not already available)
+2. Processes the text into training data
+3. Trains a prediction model
+4. Outputs training loss update and next-word predictions for 5 different seed texts along with top 5 word predictions at each stage for the last seed text.
 
 ## Model Performance
-Training Accuracy: 
-Test Accuracy:
-Perplexity:
-Coherence:
+#### Training Accuracy: 
 
-Examples:
+#### Test Accuracy:
+
+#### Perplexity:
+
+#### Coherence:
+
+#### Examples:
 
 
-Key Differences across previous versions:
+
+#### Key Differences across previous versions:
 - Version 0: Byte Pair Encoding Tokenization and pytorch embedding layer.
 
   Train Accuracy: 15%
