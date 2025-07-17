@@ -19,7 +19,7 @@ The model consists of:
 1. Embedding Layer: Converts tokenized words to dense vector embeddings generated with huggingface all-MiniLM-L6-v2 sentence embedding model 
 2. LSTM Layer: 256 units and 2 layers for learning sequential patterns
 3. Attention Layer: Computes weighted importance for each timestep in the sequence, focusing on the most relevant parts of the input.
-Dense Output Layer: Predicts probability distribution over vocabulary
+4. Dense Output Layer: Predicts probability distribution over vocabulary
 
 ## How to Run
 
