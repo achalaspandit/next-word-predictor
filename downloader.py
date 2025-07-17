@@ -4,12 +4,21 @@ import random
 import os
 
 
-def download_text_file(url="https://www.gutenberg.org/files/1661/1661-0.txt", 
-                      output_filename="1661-0.txt", 
-                      max_retries=5, 
-                      retry_delay_seconds=15,
-                      force_redownload=False):
+def download_text_file(url="https://www.gutenberg.org/files/1661/1661-0.txt", output_filename="1661-0.txt", 
+                      max_retries=5, retry_delay_seconds=15, force_redownload=False):
+    """
+    Download the Sherlock Holmes text specifically.
     
+    Args:
+        url (str): URL of the text file to download
+        output_filename (str): Name of the output file to save
+        max_retries (int): Maximum number of retries for download
+        retry_delay_seconds (int): Delay between retries in seconds
+        force_redownload (bool): Force redownload even if file exists
+        
+    Returns:
+        bool: True if download was successful, False otherwise
+    """
     if not force_redownload and os.path.exists(output_filename):
         print(f"File '{output_filename}' already exists. Skipping download.")
         return True
@@ -26,7 +35,6 @@ def download_text_file(url="https://www.gutenberg.org/files/1661/1661-0.txt",
         "Connection": "keep-alive",
         "Upgrade-Insecure-Requests": "1",
     }
-
     download_successful = False
 
     for attempt in range(1, max_retries + 1):
@@ -62,29 +70,13 @@ def download_text_file(url="https://www.gutenberg.org/files/1661/1661-0.txt",
             print(f"Max retries ({max_retries}) reached. Failed to download {output_filename}.")
 
     if download_successful:
-        print(f"\File '{output_filename}' is available in your working directory.")
+        print(f"File '{output_filename}' is available in your working directory.")
         return True
     else:
-        print("\nFile download failed after all attempts.")
+        print("File download failed after all attempts.")
         return False
 
 
-def download_sherlock_holmes_text(force_redownload=False):
-    """
-    Download the Sherlock Holmes text specifically.
-    
-    Args:
-        force_redownload (bool): Force redownload even if file exists
-        
-    Returns:
-        bool: True if download was successful, False otherwise
-    """
-    return download_text_file(
-        url="https://www.gutenberg.org/files/1661/1661-0.txt",
-        output_filename="1661-0.txt",
-        force_redownload=force_redownload
-    )
-
-
 if __name__ == "__main__":
-    download_sherlock_holmes_text()
+    download_text_file(url="https://www.gutenberg.org/files/1661/1661-0.txt",
+                                output_filename="1661-0.txt", force_redownload=False)

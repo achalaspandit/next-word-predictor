@@ -1,1 +1,1 @@
-# next-word-predictor
+# Next Word Predictor

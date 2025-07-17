@@ -5,7 +5,7 @@ import numpy as np
 from collections import Counter
 import pickle
 import os
-from downloader import download_sherlock_holmes_text
+from downloader import download_text_file
 
 def create_word_embeddings_and_tokenization(input_file, train_ratio=0.7, val_ratio=0.15):
     """
@@ -19,21 +19,17 @@ def create_word_embeddings_and_tokenization(input_file, train_ratio=0.7, val_rat
     Returns:
         train_sequences, val_sequences, test_sequences, word_to_idx, idx_to_word, embeddings_matrix
     """
-
-    # Read and clean the content
+    # 1. Read input file and clean text
     with open(input_file, "r", encoding="utf-8") as f:
         content = f.read()
-
-    # Extract the book content between the standard Project Gutenberg markers
+    
     splits = content.split("*** START OF THE PROJECT GUTENBERG EBOOK THE ADVENTURES OF SHERLOCK\nHOLMES ***")
     splits = splits[1].split("*** END OF THE PROJECT GUTENBERG EBOOK THE ADVENTURES OF SHERLOCK\nHOLMES ***")
     book_content = splits[0].replace("\r\n", " ").replace("\n", " ").replace("£", "pounds").replace("½", "one half").replace("&", "and").replace(":", "").replace("(", "").replace(")", "").replace("—", " ").replace("–", " ").replace(";", "").replace("_", " ").replace("à", "a").replace( 'â', "a").replace('æ', "ae").replace('è', "e").replace('é', "e").replace('œ', "oe").replace('‘', "").replace('’', "").replace('“', "").replace('”', "").strip()
-
-    # Clean up whitespace and split sentences
     book_content = re.sub(r'\s+', ' ', book_content).strip()
     sentences = re.split(r'(?<=[.!?])\s+', book_content)
 
-    # Create chunks
+    # 2. Create chunks of sentences
     i = 0
     chunks = []
     c = ""
@@ -44,7 +40,7 @@ def create_word_embeddings_and_tokenization(input_file, train_ratio=0.7, val_rat
             c = sentences[i]
         i += 1
 
-    # Create train val test splits 
+    # 3. Create train val test splits 
     random.shuffle(chunks)
     total_chunks = len(chunks)
     train_split = int(total_chunks * train_ratio)
@@ -53,7 +49,7 @@ def create_word_embeddings_and_tokenization(input_file, train_ratio=0.7, val_rat
     val_chunks = chunks[train_split:val_split]
     test_chunks = chunks[val_split:]
 
-    # WORD-LEVEL TOKENIZATION
+    # 4. Word-Level Tokenization
     def custom_tokenize_with_spaces(chunks):
         chunked_tokens = []
         for sent in chunks:
@@ -66,7 +62,7 @@ def create_word_embeddings_and_tokenization(input_file, train_ratio=0.7, val_rat
     val_tokenized = custom_tokenize_with_spaces(val_chunks)
     test_tokenized = custom_tokenize_with_spaces(test_chunks)
 
-    #Build Vocabulary
+    # 5. Build Vocabulary
     word_counts = Counter()
     for chunk in train_tokenized:
         word_counts.update(chunk)
@@ -84,11 +80,9 @@ def create_word_embeddings_and_tokenization(input_file, train_ratio=0.7, val_rat
     word_to_idx = {word: idx for idx, word in enumerate(vocab_words)}
     idx_to_word = {idx: word for word, idx in word_to_idx.items()}
     vocab_size = len(word_to_idx)
-    print(f"Vocabulary size: {vocab_size}")
 
-    # EMBEDDING GENERATION FOR VOCAB
+    # 6. Generate embeddings for vocabulary
     model = SentenceTransformer('all-MiniLM-L6-v2')
-
     embeddings_list = []
     embedding_dim = model.encode(['the']).shape[1]
 
@@ -107,7 +101,7 @@ def create_word_embeddings_and_tokenization(input_file, train_ratio=0.7, val_rat
         embeddings_list.append(embedding)
     embeddings_matrix = np.vstack(embeddings_list)
 
-    # CONVERT TOKENIZED CHUNKS TO SEQUENCES
+    # 7. Convert tokenized chunks to sequences of indices
     def words_to_sequences(tokenized_chunks, word_to_idx):
         sequences = []
         for chunk in tokenized_chunks:
@@ -126,12 +120,10 @@ def create_word_embeddings_and_tokenization(input_file, train_ratio=0.7, val_rat
 
     return train_sequences, val_sequences, test_sequences, word_to_idx, idx_to_word, embeddings_matrix
 
-    
-
 
 def prepare_data_and_embeddings(input_file="1661-0.txt", force_recreate=False):
     """
-    Main function to prepare data and embeddings if don't exist.
+    Main function to prepare data and embeddings if they don't exist.
     
     Args:
         input_file (str): Path to input text file
@@ -140,18 +132,16 @@ def prepare_data_and_embeddings(input_file="1661-0.txt", force_recreate=False):
     Returns:
         bool: True if processing was done, False if files already existed
     """
-    required_files = ["embeddings.pkl", "data.pkl"]
+    download_text_file()
     
-    if not force_recreate and all(os.path.exists(file_path) for file_path in required_files):
+    if not force_recreate and os.path.exists("embeddings.pkl") and os.path.exists("data.pkl"):
         print("Data files and tokenizer already exist. Skipping processing.")
         return False
     
-    print("Processing text file and creating data splits...")
     
-    download_sherlock_holmes_text()
-
     train_sequences, val_sequences, test_sequences, word_to_idx, idx_to_word, embeddings_matrix = create_word_embeddings_and_tokenization(input_file)
     
+    # Prepare data and embeddings for saving
     data = {
     'train_sequences': train_sequences,
     'val_sequences': val_sequences,
