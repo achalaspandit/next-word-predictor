@@ -6,7 +6,6 @@ A next word prediction tool built with LSTM and Attention mechanism. This projec
 ## Overview
 
 This project includes:
-
 - **`downloader.py`**: Downloads [EBOOK](https://www.gutenberg.org/files/1661/1661-0.txt)
 - **`data_processor.py`**: Cleans, tokenizes, and prepares embeddings from the text.
 - **`next-word-predictor.py`**: Trains a model and generates next-word predictions.
@@ -15,11 +14,11 @@ This project includes:
 
 ## Architecture
 The model consists of:
-
 1. Embedding Layer: Converts tokenized words to dense vector embeddings generated with huggingface all-MiniLM-L6-v2 sentence embedding model 
 2. LSTM Layer: 256 units and 2 layers for learning sequential patterns
 3. Attention Layer: Computes weighted importance for each timestep in the sequence, focusing on the most relevant parts of the input.
 4. Dense Output Layer: Predicts probability distribution over vocabulary
+<img width="871" height="101" alt="arch" src="https://github.com/user-attachments/assets/afb70fa7-7917-44bd-8ade-0e6e25ccce72" />
 
 ## How to Run
 
